@@ -1,0 +1,72 @@
+﻿@model WindowsServiceManager.WebGui.ViewModels.HomeViewModel
+
+@{
+    ViewBag.Title = "Home Page";
+}
+<div class="bs-docs-header" id="content" tabindex="-1">
+    <div class="container">
+        <h1>Windows Service Manager - @Model.EnvironmentName </h1> <p>View and manage windows services on @Model.EnvironmentName</p>
+    </div>
+</div>
+
+<div class="container body-content">
+    <div class="row">
+        <section class="col-md-12  header-notifications" data-bind="foreach: {data: eventMessenger.eventMessages, beforeRemove: eventMessenger.hideEventMessage}">
+            <div class="alert alert-info" role="alert">
+                <span data-bind="html: text"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+        </section>
+    </div>
+
+    <div class="row row-top-margin">
+        <section class="col-md-12">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="filterByText">Filter by Name</label>
+                    <input type="text" class="form-control" id="filterByText" placeholder="Enter filter text here" data-bind="value: filterText, valueUpdate: 'keyup'" />
+                </div>
+                <div class="form-group">
+                    <label for="filterByTag">Filter by Tag: </label>
+                    <ul id="filterByTag" class="tagit ui-widget ui-widget-content ui-corner-all"></ul>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <div class="row row-top-margin">
+        <section class="col-md-12">
+            <table class="table">
+                <tr data-bind="foreach:headers">
+                    <th data-bind="text: name, click: $parent.sort"></th>
+                </tr>
+                <tbody data-bind="foreach: services, visible: services().length > 0">
+                    <tr data-bind="css: statusRowClass">
+                        <td><span data-bind="css: statusIcon" class="glyphicon"></span></td>
+                        <td data-bind="text: displayName"></td>
+                        <td data-bind="text: statusDisplayName"></td>
+                        <td>
+                            <span data-bind="foreach: tags ">
+                                <!-- ko ifnot: isEditable -->
+                                <span class="label label-info tag">
+                                    <span data-bind="text: text"></span>
+                                    <span data-toggle="tooltip" data-placement="top" title="Remove tag" data-bind="click: $parent.removeTag" class="glyphicon glyphicon-remove"></span>
+                                </span>
+                                <!-- /ko -->
+                                <!-- ko if: isEditable -->
+                                <form class="form-inline-tags" data-bind="event: {keyup : handleKeyPress}"><input type="text" data-bind="value: text" class="newTagTextBox" /> <button class="btn btn-primary btn-xs" data-bind="click: save">Save</button></form>
+                                <!-- /ko -->
+                            </span>
+                            <button class="btn btn-primary btn-xxs" data-bind="click: addEditableTag"> Add <i class="glyphicon glyphicon-plus"></i></button>
+                        </td>
+                        <td data-bind="foreach: actions">
+                            <a data-bind="attr: {href: '/ServiceAction/' + url(), title:url }, click:performAction" data-toggle="tooltip">
+                                <span data-bind="css: icon" class="glyphicon "></span>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>
